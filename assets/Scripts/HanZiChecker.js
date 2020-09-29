@@ -157,16 +157,22 @@ var HanZiChecker=cc.Class({
         placeholder.horizontalAlign=cc.Label.HorizontalAlign.CENTER;
         placeholder.verticalAlign=cc.Label.HorizontalAlign.CENTER;
     },
-
     // 汉字 的 初始化 
         //将从 基本汉字组件范围内  获取
     initHanZi(){
-        let len = this.checkerMng.gameMng.compoMng.initCompList.length;
-        var r=Math.random()*len;
-        this.HanZi = this.checkerMng.gameMng.compoMng.initCompList[Math.floor(r)];
+        this.initHanziByGraph()
         this.Opacity = this.checkerMng.initOpacity;
         this.node.scale =1;
         //TODO;
+    },
+    initHanZiRandom(){
+        this.Opacity = this.checkerMng.initOpacity;
+        this.node.scale =1;
+    },
+    initHanZiSimple(){
+        let len = this.checkerMng.gameMng.compoMng.initCompList.length;
+        //var r=Math.random()*len;
+        this.HanZi = "口";
     },
     initHanziByGraph(){//使用 graph 来进行 初始化字符操作
         let ckmng = this.checkerMng
@@ -180,8 +186,7 @@ var HanZiChecker=cc.Class({
         if(hanzi_r!=ckmng.emptyHanZi) hanzis.push(hanzi_r)
         if(hanzi_l!=ckmng.emptyHanZi) hanzis.push(hanzi_l)
         this.HanZi = graph.getHanZiByRelation(hanzis)
-        this.Opacity = this.checkerMng.initOpacity;
-        this.node.scale =1;
+
         // 根据 
         //if(this.boardPos.x > 0 && this.)
 

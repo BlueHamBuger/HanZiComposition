@@ -208,6 +208,7 @@ var HanZiContainer = {
         self.compoHanZis = {};
         // 表示这条路径最终可以 构成的汉字
         self.finalHanZi = null;
+        self.width = 1;
         Object.defineProperty(self, "length", {
             get: function() { return self.inPos.length; }
         });
@@ -231,6 +232,7 @@ var HanZiContainer = {
             self.compoHanZis = {};
             self.queryMatrix.length = 0;
             self.initQueryPos = null;
+            self.width = 1;// 矩阵的 宽度
         };
         //将 汉字 根据 pos 来添加到
         self.AddToContainer = function(pos, hanZi) {
@@ -249,14 +251,21 @@ var HanZiContainer = {
                 //self.initPos=pos;
                 self.initPos.x--;
             } else if (self.structMatrix[insertIndex.x] == null) {
-                self.structMatrix[insertIndex.x] = [];
+                self.structMatrix[insertIndex.x] = []; 
             }
+
             if (insertIndex.y < 0) {
                 for (var i in self.structMatrix) {
                     self.structMatrix[i].unshift(null);
                 }
                 insertIndex.y = 0;
                 self.initPos.y--;
+            }else{
+                for (var arr of self.structMatrix) {
+                    while(arr.length < self.width){
+                        arr.push(null)
+                    }
+                }
             }
 
             if (insertQueryIndex.x < 0) {
@@ -268,16 +277,27 @@ var HanZiContainer = {
                 self.queryMatrix[insertQueryIndex.x] = [];
             }
             if (insertQueryIndex.y < 0) {
+
                 for (var i in self.queryMatrix) {
                     self.queryMatrix[i].unshift(null);
                 }
                 insertQueryIndex.y = 0;
-                self.initQueryPos.y--;
+                self.initQueryPos.y--;self.width ++
+            }else{// y>0
+                if(insertIndex.y+ 1 > self.width){
+                    self.width ++
+                }
+                for (var arr of self.queryMatrix) {
+                    while(arr.length < self.width){
+                        arr.push(null)
+                    }
+                }
             }
 
 
             self.queryMatrix[insertQueryIndex.x][insertQueryIndex.y] = hanZi;
             self.structMatrix[insertIndex.x][insertIndex.y] = hanZi;
+            //console.log(self.queryMatrix);
 
         };
 
@@ -309,6 +329,7 @@ var HanZiContainer = {
             self.initPos = null;
             self.curPos = null;
             self.initQueryPos = null;
+            self.width = 1;
             self.structMatrix.length = 0;
             self.compoHanZis = {};
             self.queryMatrix.length = 0;

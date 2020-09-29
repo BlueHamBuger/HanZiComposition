@@ -43,21 +43,28 @@ cc.Class({
         exchangeButton:{
             default: null   ,
             type: cc.Button            
+        },
+        difficultyButton:{
+            default: null   ,
+            type: cc.Button            
         }
     },
 
     mainMenuButtons() {
-        return [this.startButton, this.dictButton];
+        return [this.startButton, this.dictButton,this.difficultyButton,this.descriptionButton];
     },
 
     gameMenuButtons() {
-        return [this.pauseButton, this.playButton, this.exitButton,this.exchangeButton];
+        return [this.pauseButton, this.playButton, this.exitButton,this.exchangeButton,this.exchangeButton];
     },
 
     dictMenuButtons() {
         return [this.searchButton, this.exitButton];
     },
     descriptionButtons(){
+        return [this.exitButton];
+    },
+    difficultyButtons(){
         return [this.exitButton];
     },
 

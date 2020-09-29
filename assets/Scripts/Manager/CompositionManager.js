@@ -21,6 +21,9 @@ cc.Class({
         this.StringProcess = StringProcess
         this.HanZiGraph = HanZiGraph
         this.StringProcess.compoMng = this;
+
+    },
+    loadRes(res_callback){
         this.initCompList=['日','月'];
         this.RedupinitList=['心','日','月','曰','水','火','犬','又','金','石','木','口','牛','刀']
         this.HanZiCompMDic={};
@@ -30,29 +33,33 @@ cc.Class({
                 cc.error(err.message);return;
             }
             this.initCompList = json.json;
-        }.bind(this))
-        cc.loader.loadRes('tt',function(err,json){
-            if (err) {
-                cc.error(err.message);
-                return;
-            }
-            for(var key in json.json){
-                var convey = key.replace(/\'/g,`"`)
-                this.HanZiCompMDic[convey] = json.json[key];
-            }
-            console.log(this.HanZiCompMDic);
-            for(var key in this.HanZiCompMDic){
-                if(this.InverseHanZiCompMDic[this.HanZiCompMDic[key]]==null){
-                    this.InverseHanZiCompMDic[this.HanZiCompMDic[key]] = [];
+            cc.loader.loadRes('tt',function(err,json){
+                if (err) {
+                    cc.error(err.message);
+                    return;
                 }
-                var compo_martrix = JSON.parse(key)
-                HanZiGraph.insert(compo_martrix,key);
-                // 展开数组
-                this.InverseHanZiCompMDic[this.HanZiCompMDic[key]].push(compo_martrix);
-            }
-            HanZiGraph.sort()
-            this.HanZiGraph.init()
+                for(var key in json.json){
+                    var convey = key.replace(/\'/g,`"`)
+                    this.HanZiCompMDic[convey] = json.json[key];
+                }
+                console.log(this.HanZiCompMDic);
+                for(var key in this.HanZiCompMDic){
+                    if(this.InverseHanZiCompMDic[this.HanZiCompMDic[key]]==null){
+                        this.InverseHanZiCompMDic[this.HanZiCompMDic[key]] = [];
+                    }
+                    var compo_martrix = JSON.parse(key)
+                    HanZiGraph.insert(compo_martrix,key);
+                    // 展开数组
+                    this.InverseHanZiCompMDic[this.HanZiCompMDic[key]].push(compo_martrix);
+                }
+                HanZiGraph.sort()
+                res_callback()
+            }.bind(this))
         }.bind(this))
+    },
+    initManager(gameMng,difficulty){
+        this.gameMng = gameMng
+        this.HanZiGraph.init(difficulty*500)
     },
     // 给予 要进行 引爆的 队列
     CompExplosionQueue(explosionQueue){
@@ -173,6 +180,8 @@ cc.Class({
                 var hanZi = structMatrix[i][j];
                 if(hanZi!=null){
                     structResults[i][j]=this.getAliases(hanZi);
+                }else{
+                    structResults[i][j]=['']
                 }
             }
         }
@@ -257,8 +266,8 @@ cc.Class({
     ,
     _aliasQuery(queryMats,index,indexX,indexY,structResults){
         var xLength = structResults.length-1;
-        var yLength = structResults[0].length-1;
         if(indexX == xLength+1) return;
+        var yLength = structResults[indexX].length-1;
         if(queryMats[index]==null){
             queryMats[index] = [];
         }
@@ -378,11 +387,15 @@ var HanZiGraph = cc.Class({
         graph:{},//存储所有的结点 的字典 方便快速查询字符
         sorted_arr:[],//按照degree 排序后的 所有字符数组
         gaussian:null,
-        init(){//初始
+        sigma:100,
+        u:50,
+        init(difficulty){//初始
             let hanzi_size = this.sorted_arr.length
             var that = HanZiGraph
-            //that.gaussian = new GuassianRandom(hanzi_size/2,hanzi_size/5,hanzi_size)
-            that.gaussian = new GuassianRandom(100,50,hanzi_size)
+            if(that.gaussian == null || difficulty != that.u){
+                that.u = difficulty
+                that.gaussian = new GuassianRandom(that.sigma,that.u,hanzi_size)
+            }
         },
         _isValidIdx(i,j,i_length,j_length){
             return i>=0&&i<i_length && j>=0  && j<j_length
@@ -443,11 +456,12 @@ var HanZiGraph = cc.Class({
                 }
                 return next_hanzi[Math.floor(Math.random()*amount)]
             }else{//使用 度
+                //if(that.gaussian == null) that.init()
                 let idx = that.gaussian.getRandom(rand_frac)
                 return that.sorted_arr[idx]
             }
+        },
 
-        }
     },
 })
 

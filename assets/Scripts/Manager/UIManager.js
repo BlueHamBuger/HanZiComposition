@@ -51,6 +51,14 @@ cc.Class({
         descriptionBoxNode:{
             default: null,
             type: cc.Node            
+        },
+        difficulty:{
+            default: null,
+            type: require('../UIs/Difficulty')
+        },
+        loading:{
+            default: null,
+            type: require('../UIs/Loading')
         }
     },
 
@@ -59,6 +67,7 @@ cc.Class({
         this.hints = cc.find('Canvas/UIs/HintUI').getComponent('Hints');
         this.hints.initUI(this);
         this.score.initUI(this);
+        this.difficulty.initUI(this);
         for (let button of this.controlButtons.mainMenuButtons()) {
             button.node.active = true;
         }
@@ -71,7 +80,10 @@ cc.Class({
         this.searchBoxNode.active = false;
         this.resultsBoxNode.active = false;
         this.descriptionBoxNode.active = false;
+        this.difficulty.node.active = false;
+        this.loading.node.active = false;
         this.controlButtons.descriptionButton.node.active = true;
+        this.controlButtons.difficultyButton.node.active = true;
         
     },
 
@@ -83,6 +95,7 @@ cc.Class({
 
     // control ui
     startGame() {
+        //this.onLoading()// 加载
         this.gameMng.startGame();
         this.controlButtons.startButton.node.active = false;
         this.controlButtons.dictButton.node.active =false;
@@ -93,6 +106,7 @@ cc.Class({
         this.controlButtons.exchangeButton.node.active = true;
         this.descriptionBoxNode.active = false;
         this.controlButtons.descriptionButton.node.active = false;
+        this.controlButtons.difficultyButton.node.active = false;
 
     },
 
@@ -109,6 +123,7 @@ cc.Class({
         this.initManager(this.gameMng);
         this.hints.initUI(this);
         this.score.initUI(this);
+        this.difficulty.initUI(this);
         for (let button of this.controlButtons.mainMenuButtons()) {
             button.node.active = true;
         }
@@ -119,6 +134,9 @@ cc.Class({
         this.hints.node.active = false;
         this.searchBoxNode.active = false;
         this.resultsBoxNode.active = false;
+        this.difficulty.node.active = false;
+        this.loading.node.active = false;
+        //this.controlButtons.difficultyButton.node.active = true;
         
         //this.init();
         //this.gameMng.
@@ -137,9 +155,7 @@ cc.Class({
         for (let button of this.controlButtons.dictMenuButtons()) {
             button.node.active = true;
         }
-        for (let button of this.controlButtons.descriptionButtons()) {
-            button.node.active = false;
-        }
+
         this.searchBoxNode.active = true;
         this.resultsBoxNode.active = true;
     },
@@ -148,9 +164,6 @@ cc.Class({
             button.node.active = false;
         }
         for (let button of this.controlButtons.gameMenuButtons()) {
-            button.node.active = false;
-        }
-        for (let button of this.controlButtons.dictMenuButtons()) {
             button.node.active = false;
         }
         for (let button of this.controlButtons.descriptionButtons()) {
@@ -175,6 +188,19 @@ cc.Class({
         }
         self.results.setResult(results);
     },
+    //difficulty
+    startDifficulty(){
+        for (let button of this.controlButtons.mainMenuButtons()) {
+            button.node.active = false;
+        }
+        for (let button of this.controlButtons.gameMenuButtons()) {
+            button.node.active = false;
+        }
+        for (let button of this.controlButtons.difficultyButtons()) {
+            button.node.active = true;
+        }
+        this.difficulty.node.active = true;
+    },
 
     // score ui
     setScore(value) {
@@ -193,8 +219,23 @@ cc.Class({
     },
     ClearHints() {
         this.hints.ClearHints();
+    },
+    //loading
+    onLoading(){
+        for (let button of this.controlButtons.mainMenuButtons()) {
+            button.node.active = false;
+        }
+        for (let button of this.controlButtons.gameMenuButtons()) {
+            button.node.active = false;
+        }
+        this.loading.node.active =true;
+    },
+    onLoadingOver(){
+        for (let button of this.controlButtons.mainMenuButtons()) {
+            button.node.active = true;
+        }
+        this.loading.node.active =false;
     }
-
     // update (dt) {},
 });
 

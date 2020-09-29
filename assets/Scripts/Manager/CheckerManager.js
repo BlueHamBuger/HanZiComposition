@@ -287,7 +287,7 @@ cc.Class({
             for(let row in this.emptyCol[col]){
                 let curck = this.emptyCol[col][row];
                 this.checkers[curck.boardPos.x][curck.boardPos.y] = curck;
-                curck.initHanziByGraph();
+                curck.initHanZi();
             }
         }
         this.gameMng.animMng.fallOff(fallingList,fallingDists,this.checkerLayout);

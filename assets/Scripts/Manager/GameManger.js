@@ -79,7 +79,10 @@ cc.Class({
             set: function(value) {
                 this.uiMng.setScore(value);
             }
-
+        },
+        difficulty:{
+            visible:false,
+            default:0,
         }
 
     },
@@ -87,7 +90,9 @@ cc.Class({
         this.uiMng = this.initMng("UIManager", this.node);
         this.uiMng.initManager(this);
         this.compoMng = this.initMng("CompositionManager", this.node);
-        this.compoMng.initManager(this);
+        this.resLoading()
+        this.compoMng.loadRes(this.resComplete.bind(this))
+        
         // this.postEffectMng = this.initMng("PostEffectManager",this.renderCamera.node);
         // this.postEffectMng.initManager(this,this.renderCamera);
     },
@@ -100,6 +105,8 @@ cc.Class({
     //游戏状态相关
     startGame() {
         this.score = 0;
+        this.compoMng.initManager(this,this.difficulty);
+
         this.inputMng = this.initMng("InputManager", this.checkerBoard);
         this.inputMng.initManager(this, this.drawing);
 
@@ -107,7 +114,7 @@ cc.Class({
         this.checkerMng.initManager(this, this.checkerPref, this.checkerAmount, this.paddingRate, this.spacingRate, this.emptyHanZi);
 
         this.animMng = this.initMng("AnimationManager", this.node);
-        this.animMng.initManager(this);
+        this.animMng.initManager(this); 
 
 
     },
@@ -139,6 +146,17 @@ cc.Class({
     },
     exchangeMode(){
         this.inputMng.exchange_mode = !this.inputMng.exchange_mode
+    },
+    updateDifficulty(difficulty){
+        //this.compoMng.updateDifficulty(difficulty)
+        this.difficulty = difficulty
+    },
+    //资源载入
+    resComplete(){
+        this.uiMng.onLoadingOver()
+    },
+    resLoading(){
+        this.uiMng.onLoading()
     }
 
 
